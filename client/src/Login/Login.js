@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 class Login extends Component {
+    // user login hanlder for username setup
     loginHandler = (event) => {
         event.preventDefault()
         this.props.setUsername(event.target.username.value)
@@ -13,6 +14,7 @@ class Login extends Component {
               <input type="text" id="username"/><br/>
               <input type="submit" value="Connect"/>
           </form>
+          <p>{this.props.systemMessage}</p>
       </div>
     );
   }

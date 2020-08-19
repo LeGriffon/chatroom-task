@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 class TextBar extends Component {
-
+    // enter key handler for textbox input
     messageEnterKeyHandler = (event) => {
         if (event.keyCode === 13) {
             event.preventDefault()
@@ -10,14 +10,16 @@ class TextBar extends Component {
         }
     }
 
+    // send button handler for form input
     messageButtonSendHandler = (event) => {
         event.preventDefault()
         this.props.getMessage(event.target.textContent.value)
         event.target.textContent.value = ""
     }
 
+    // disconnect handler for user initiated exit code 0
     disconnectHandler = (event) => {
-        this.props.disconnect()
+        this.props.disconnect(0)
     }
 
   render() {
