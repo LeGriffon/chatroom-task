@@ -19,16 +19,18 @@ class Chatroom extends Component {
         // WebSocket connection is ready to send and receive data
         // First time mounted to the Chatroom, duplication of the new username has to be checked
         this.connection.onopen = () => {
-            console.log('connected')
-            this.checkUsername()
+            this.initNewUser()
           }
 
         // messageEvent handler called when a message is received
         this.connection.onmessage = (message) => {
             const data = JSON.parse(message.data)
-            console.log(data)
             // handles server's exit code: 1 (duplicate username)
             if(data.CODE === 1) {
+                this.disconnect(data.CODE)
+            }
+            // handles server's exit code: 2 (inactive logout)
+            else if(data.CODE === 2) {
                 this.disconnect(data.CODE)
             }
             // update local message array with data sent from server
@@ -40,7 +42,7 @@ class Chatroom extends Component {
 
     // duplicate username check handler for each user's init process
     // code 9 is sent to server for duplicate username check
-    checkUsername = () => {
+    initNewUser = () => {
         const data = {username: this.props.username, Code:9}
         this.connection.send(JSON.stringify(data))
     }
@@ -52,9 +54,7 @@ class Chatroom extends Component {
     }
 
     // connection handler that disconnect user from server with respect to different exit code
-    disconnect = (code) => {
-        console.log('Disconnecting for ' + this.props.username + ' initiated')
-        
+    disconnect = (code) => {        
         // code 0: User left chatroom by clicking disconnect button
         if(code === 0) {
             const data = {username:this.props.username, Code:0}
@@ -64,12 +64,15 @@ class Chatroom extends Component {
         }
         // code 1: server returned error code, duplicate username
         else if(code === 1) {
-            this.props.setSystemMessage("Nickname​ ​already​ ​taken")
+            this.props.setSystemMessage(this.props.username + " Nickname is​ ​already​ ​taken")
+        }
+        // code 1: server returned error code, inactive logout
+        else if(code === 2) {
+            this.props.setSystemMessage("Disconnected​ ​by​ ​the​ ​server​ ​due​ ​to​ ​inactivity")
         }
         // connection colse routine
         this.props.setUsername(null)
         this.connection.close()
-        console.log('Disconnecting for ' + this.props.username + ' finished')
     }
 
 
