@@ -1,6 +1,7 @@
 import React, { Component,Fragment } from 'react';
-import MessageWindow from './MessageWindow/MessageWindow';
-import TextBar from './TextBar/TextBar';
+import './Chatroom.css';
+import MessageWindow from '../../components/MessageWindow/MessageWindow';
+import TextBar from '../../components/TextBar/TextBar';
 
 const URL = 'ws://localhost:8080/'
 
@@ -38,6 +39,9 @@ class Chatroom extends Component {
                 this.setState({messages: [...this.state.messages, data]})
             }
         }
+        if(this.connection.readyState === WebSocket.CLOSED) {
+            this.disconnect(3)
+        }
     }
 
     // duplicate username check handler for each user's init process
@@ -59,7 +63,7 @@ class Chatroom extends Component {
         if(code === 0) {
             const data = {username:this.props.username, Code:0}
             this.connection.send(JSON.stringify(data))
-            this.getMessage(" just left the chatroom, ​connection​ ​lost :(")
+            this.getMessage(" just left the chatroom, ​user logged out :(")
             this.props.setSystemMessage("You have logged out of the chatroom")
         }
         // code 1: server returned error code, duplicate username
@@ -70,6 +74,12 @@ class Chatroom extends Component {
         else if(code === 2) {
             this.props.setSystemMessage("Disconnected​ ​by​ ​the​ ​server​ ​due​ ​to​ ​inactivity")
         }
+        else if(code === 3) {
+            const data = {username:this.props.username, Code:3}
+            this.connection.send(JSON.stringify(data))
+            this.getMessage(" just left the chatroom, ​connection​ ​lost :(")
+            this.props.setSystemMessage("Connection lost. Disconnected​ to ​the​ ​server")
+        }
         // connection colse routine
         this.props.setUsername(null)
         this.connection.close()
@@ -78,7 +88,7 @@ class Chatroom extends Component {
 
   render() {
     return (
-      <Fragment>
+      <Fragment className="chatroom">
           <MessageWindow messages={this.state.messages} />
           <TextBar getMessage={this.getMessage} disconnect={this.disconnect} />
       </Fragment>

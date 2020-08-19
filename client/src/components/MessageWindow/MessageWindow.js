@@ -11,7 +11,7 @@ class MessageWindow extends Component {
 
   render() {
     return (
-      <div id="messageWindow">
+      <div className="messageWindow">
           {this.displayMessages()}
       </div>
     );

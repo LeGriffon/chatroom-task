@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+import './Login.css'
+import '../../components/Button/Button'
+import Button from '../../components/Button/Button'
+import TextInput from '../../components/TextInput/TextInput'
 
 class Login extends Component {
     // user login hanlder for username setup
@@ -8,11 +12,11 @@ class Login extends Component {
     }
   render() {
     return (
-      <div id="login">
+      <div className="login">
           <form onSubmit={this.loginHandler}>
               <label>Please enter an username to enter the chatroom:</label><br/>
-              <input type="text" id="username"/><br/>
-              <input type="submit" value="Connect"/>
+              <TextInput type="text" id="username"/><br/>
+              <Button type="submit" value="Connect"/>
           </form>
           <p>{this.props.systemMessage}</p>
       </div>

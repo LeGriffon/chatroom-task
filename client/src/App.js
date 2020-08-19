@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
-import Login from './Login/Login'
-import Chatroom from './Chatroom/Chatroom'
+import Login from './pages/Login/Login'
+import Chatroom from './pages/Chatroom/Chatroom'
 
 class App extends Component {
   // state object that stores current username and systemMessage

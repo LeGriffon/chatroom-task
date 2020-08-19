@@ -67,6 +67,10 @@ wss.on('connection', (connection) => {
             console.log(data.username + ' left chatroom, server received code: 0')
             usernames.delete(data.username)
         }
+        else if(data.Code === 3) {
+            console.log(data.username + ' lost connection, server received code: 3')
+            usernames.delete(data.username)
+        }
         // code: 9, requested duplicate username check for new user init
         else if(data.Code === 9){
             // duplicate found, send back code: 1, indicating duplicate username

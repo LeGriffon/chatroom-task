@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Button from '../../components/Button/Button'
+import TextInput from '../../components/TextInput/TextInput'
 
 class TextBar extends Component {
     // enter key handler for textbox input
@@ -24,11 +26,11 @@ class TextBar extends Component {
 
   render() {
     return (
-      <div id="textBar">
+      <div className="textBar">
           <form onSubmit={this.messageButtonSendHandler}>
-            <textarea onKeyDown={this.messageEnterKeyHandler} id="textContent" ></textarea><br/>
-            <input type="submit" value="Send"/>
-            <input onClick={this.disconnectHandler} type="button" value="Disconnect"/>
+            <TextInput onKeyDown={this.messageEnterKeyHandler} type="text" id="textContent"/>
+            <Button type="submit" value="Send" />
+            <Button onClick={this.disconnectHandler} type="button" value="Disconnect" />
           </form>
           
       </div>
