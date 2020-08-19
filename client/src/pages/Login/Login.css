@@ -1,8 +1,26 @@
 .login {
-    width: 700px;
+    background: url("../../imgs/ubiquiti_wallpaper.jpg") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    width: 100vw;
+    height:100vh;
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    justify-content: center;
     margin: auto;
   }
   
+#label {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+}
+
+#systemMessage {
+  color: red;
+  font-size: 18;
+  font-weight: bold;
+}

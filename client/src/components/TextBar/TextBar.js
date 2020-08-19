@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './TextBar.css'
 import Button from '../../components/Button/Button'
 import TextInput from '../../components/TextInput/TextInput'
 
@@ -28,9 +29,13 @@ class TextBar extends Component {
     return (
       <div className="textBar">
           <form onSubmit={this.messageButtonSendHandler}>
-            <TextInput onKeyDown={this.messageEnterKeyHandler} type="text" id="textContent"/>
-            <Button type="submit" value="Send" />
-            <Button onClick={this.disconnectHandler} type="button" value="Disconnect" />
+            <div id='displayrow'>
+              <TextInput id="textContent" onKeyDown={this.messageEnterKeyHandler} type="text"/>
+              <div id='buttonrow'>
+                <Button type="submit" value="Send" />
+                <Button onClick={this.disconnectHandler} type="button" value="Disconnect" />
+              </div>
+            </div>
           </form>
           
       </div>

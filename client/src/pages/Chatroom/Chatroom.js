@@ -17,11 +17,16 @@ class Chatroom extends Component {
 
     // Invoked immediately after WebSocket's connection is mounted (inserted into the tree)
     componentDidMount = () => {
+
         // WebSocket connection is ready to send and receive data
         // First time mounted to the Chatroom, duplication of the new username has to be checked
         this.connection.onopen = () => {
             this.initNewUser()
-          }
+        }
+
+        this.connection.onerror = () => {
+            this.disconnect(4)
+        }
 
         // messageEvent handler called when a message is received
         this.connection.onmessage = (message) => {
@@ -38,9 +43,6 @@ class Chatroom extends Component {
             else{
                 this.setState({messages: [...this.state.messages, data]})
             }
-        }
-        if(this.connection.readyState === WebSocket.CLOSED) {
-            this.disconnect(3)
         }
     }
 
@@ -68,17 +70,22 @@ class Chatroom extends Component {
         }
         // code 1: server returned error code, duplicate username
         else if(code === 1) {
-            this.props.setSystemMessage(this.props.username + " Nickname is​ ​already​ ​taken")
+            this.props.setSystemMessage("Username " + this.props.username + " is​ ​already​ ​taken")
         }
-        // code 1: server returned error code, inactive logout
+        // code 2: server returned error code, inactive logout
         else if(code === 2) {
             this.props.setSystemMessage("Disconnected​ ​by​ ​the​ ​server​ ​due​ ​to​ ​inactivity")
         }
+        // code 3: lost connection with server
         else if(code === 3) {
             const data = {username:this.props.username, Code:3}
             this.connection.send(JSON.stringify(data))
             this.getMessage(" just left the chatroom, ​connection​ ​lost :(")
             this.props.setSystemMessage("Connection lost. Disconnected​ to ​the​ ​server")
+        }
+        // code 4: connection failed, unable to connect
+        else if(code === 4) {
+            this.props.setSystemMessage("Connection failed. Unable​ to connect to ​the​ ​server")
         }
         // connection colse routine
         this.props.setUsername(null)
@@ -89,8 +96,8 @@ class Chatroom extends Component {
   render() {
     return (
       <Fragment className="chatroom">
-          <MessageWindow messages={this.state.messages} />
-          <TextBar getMessage={this.getMessage} disconnect={this.disconnect} />
+          <MessageWindow id='chatroomMessageWindow' messages={this.state.messages} username={this.props.username} />
+          <TextBar id='textbar' getMessage={this.getMessage} disconnect={this.disconnect} />
       </Fragment>
     );
   }

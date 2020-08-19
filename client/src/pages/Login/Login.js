@@ -14,11 +14,11 @@ class Login extends Component {
     return (
       <div className="login">
           <form onSubmit={this.loginHandler}>
-              <label>Please enter an username to enter the chatroom:</label><br/>
+              <p id='label'>Please enter an username to enter the chatroom:</p>
               <TextInput type="text" id="username"/><br/>
-              <Button type="submit" value="Connect"/>
+              <Button type="submit" value="Connect" id='button'/>
           </form>
-          <p>{this.props.systemMessage}</p>
+          <p id='systemMessage'>{this.props.systemMessage}</p>
       </div>
     );
   }

@@ -1,0 +1,15 @@
+#buttonrow{
+    display: flex;
+    flex-direction: row;
+}
+
+#displayrow{
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    bottom: 0px;
+    margin: 0px auto;
+}
