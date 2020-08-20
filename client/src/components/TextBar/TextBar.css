@@ -1,15 +1,16 @@
-#buttonrow{
-    display: flex;
-    flex-direction: row;
-}
-
 #displayrow{
     width: 100vw;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    position: -webkit-sticky;
     position: sticky;
-    bottom: 0px;
+    top: 0px;
     margin: 0px auto;
+}
+
+#buttonrow{
+    display: flex;
+    flex-direction: row;
 }

@@ -1,8 +1,8 @@
 const WebSocket = require('ws');
 
 // created a new server instance at port 8080, disable permessage-deflate
-const wss = new WebSocket.Server({ port: 8080 }, {
-    perMessageDeflate: false
+const wss = new WebSocket.Server({ port: 8080 }, () => {
+    console.log("Chatroom server started...")
   });
 
 // clients array for each connection
@@ -11,7 +11,7 @@ let clients = []
 let usernames = new Set()
 
 // user timeout in milliseconds
-const userTimeout = 60000
+const userTimeout = 300000
 
 // broadcast function for sending message to each user
 function broadcast(message) {
@@ -30,10 +30,16 @@ function cleanUp() {
         client.connection.send(JSON.stringify({CODE: 2}))
     })
     const clientsDisconnectLeaving = clients.filter(client => client.connection.readyState === client.connection.CLOSED)
+    clientsDisconnectLeaving.forEach(client => {
+        broadcast({username: client.username, message: ' ​left​ ​the​ ​chat,​ ​connection​ ​lost'})
+        console.log(client.username + ' is disconnected')
+        usernames.delete(client.username)
+    })
     clients = clients.filter(client =>  client.connection.readyState !== client.connection.CLOSED)
     clients = clients.filter(client => Date.now() - client.activeTime <= userTimeout)
 }
 
+// ping pong routine for cheking disconnected connections
 function noop() {}
 
 function heartbeat() {
@@ -54,8 +60,7 @@ const interval = setInterval(function ping() {
 wss.on('connection', (connection) => {
     connection.isAlive = true
     connection.on('pong', heartbeat)
-    // add current connected client to the clients array
-    clients.push({connection: connection, username: '', activeTime: Date.now()})
+    
 
     // when a message is received from client
     connection.on('message', (message) => {
@@ -65,10 +70,6 @@ wss.on('connection', (connection) => {
         // code: 0, user left chatroom by clicking disconnect button
         if(data.Code === 0) {
             console.log(data.username + ' left chatroom, server received code: 0')
-            usernames.delete(data.username)
-        }
-        else if(data.Code === 3) {
-            console.log(data.username + ' lost connection, server received code: 3')
             usernames.delete(data.username)
         }
         // code: 9, requested duplicate username check for new user init
@@ -81,7 +82,8 @@ wss.on('connection', (connection) => {
             // add new user to the username set, and welcome new user message from server
             else {
                 console.log(data.username + ' is added as a new user to the chatroom')
-                clients.find(client => client.connection === connection)['username'] = data.username
+                // add current connected client to the clients array
+                clients.push({connection: connection, username: data.username, activeTime: Date.now()})
                 usernames.add(data.username)
                 broadcast({username: data.username, message: 'now joined chatroom! :)'})
             }
@@ -96,4 +98,4 @@ wss.on('connection', (connection) => {
 
 wss.on('close', function close() {
     clearInterval(interval);
-  });
+});

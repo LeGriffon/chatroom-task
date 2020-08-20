@@ -32,8 +32,8 @@ class TextBar extends Component {
             <div id='displayrow'>
               <TextInput id="textContent" onKeyDown={this.messageEnterKeyHandler} type="text"/>
               <div id='buttonrow'>
-                <Button type="submit" value="Send" />
-                <Button onClick={this.disconnectHandler} type="button" value="Disconnect" />
+                <Button id='sendbutton' type="submit" value="Send" />
+                <Button id='disconnectbutton' onClick={this.disconnectHandler} type="button" value="Disconnect" />
               </div>
             </div>
           </form>

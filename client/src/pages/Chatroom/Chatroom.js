@@ -9,7 +9,8 @@ class Chatroom extends Component {
     // state object that stores Chatroom's message array
     // each message is structured as {username, message}
     state = {
-        messages: []
+        messages: [],
+        userClickDisconnect: false
     }
     
     // Create a WebSocket object in order to communicate with the server
@@ -25,7 +26,7 @@ class Chatroom extends Component {
         }
 
         this.connection.onerror = () => {
-            this.disconnect(4)
+            this.disconnect(3)
         }
 
         // messageEvent handler called when a message is received
@@ -44,6 +45,13 @@ class Chatroom extends Component {
                 this.setState({messages: [...this.state.messages, data]})
             }
         }
+
+        // routinely check if connection is valid
+        setInterval(() => {
+            if (this.state.userClickDisconnect && this.connection.readyState === WebSocket.CLOSED) {
+                this.disconnect(3)
+            }
+        }, 100);
     }
 
     // duplicate username check handler for each user's init process
@@ -65,7 +73,7 @@ class Chatroom extends Component {
         if(code === 0) {
             const data = {username:this.props.username, Code:0}
             this.connection.send(JSON.stringify(data))
-            this.getMessage(" just left the chatroom, ​user logged out :(")
+            this.setState({userClickDisconnect: true})
             this.props.setSystemMessage("You have logged out of the chatroom")
         }
         // code 1: server returned error code, duplicate username
@@ -76,15 +84,8 @@ class Chatroom extends Component {
         else if(code === 2) {
             this.props.setSystemMessage("Disconnected​ ​by​ ​the​ ​server​ ​due​ ​to​ ​inactivity")
         }
-        // code 3: lost connection with server
+        // code 3: connection failed, unable to connect
         else if(code === 3) {
-            const data = {username:this.props.username, Code:3}
-            this.connection.send(JSON.stringify(data))
-            this.getMessage(" just left the chatroom, ​connection​ ​lost :(")
-            this.props.setSystemMessage("Connection lost. Disconnected​ to ​the​ ​server")
-        }
-        // code 4: connection failed, unable to connect
-        else if(code === 4) {
             this.props.setSystemMessage("Connection failed. Unable​ to connect to ​the​ ​server")
         }
         // connection colse routine
@@ -95,7 +96,7 @@ class Chatroom extends Component {
 
   render() {
     return (
-      <Fragment className="chatroom">
+      <Fragment id="chatroom">
           <MessageWindow id='chatroomMessageWindow' messages={this.state.messages} username={this.props.username} />
           <TextBar id='textbar' getMessage={this.getMessage} disconnect={this.disconnect} />
       </Fragment>
