@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import './TextInput.css'
 
-class TextInput extends Component {
-  render() {
-    return (
-        <input className='textinput' onKeyDown={this.props.onKeyDown} type={this.props.type} id={this.props.id} value={this.props.value} />
-    );
-  }
+const textinput = (props) => {
+  return (
+      <input className='textinput' onKeyDown={props.onKeyDown} type={props.type} id={props.id} value={props.value} />
+  );
 }
 
-export default TextInput;
+export default textinput;

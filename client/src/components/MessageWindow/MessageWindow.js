@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import './MessageWindow.css'
 
-class MessageWindow extends Component {
+const messagewindow = (props) => {
   // function that displays the message from chatroom using props
-  displayMessages = () => this.props.messages.map(message =>
+  const displayMessages = () => props.messages.map(message =>
     <li key={message.message}>
       <div className="message">
         <div className="username">
@@ -17,15 +17,13 @@ class MessageWindow extends Component {
     </li>
   )
 
-  render() {
-    return (
-      <div className='messageWindow' id='messageDiv'>
-        <ul>
-          {this.displayMessages()}
-        </ul>
-      </div>
-    );
-  }
-}
+  return (
+    <div className='messageWindow' id='messageDiv'>
+      <ul>
+        {displayMessages()}
+      </ul>
+    </div>
+  )
+};
 
-export default MessageWindow;
+export default messagewindow;

@@ -1,43 +1,43 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import Login from './pages/Login/Login'
 import Chatroom from './pages/Chatroom/Chatroom'
 
-class App extends Component {
+const App = (props) => {
   // state object that stores current username and systemMessage
-  state = {
-    username: null,
+  const [usernameState, setUsernameState] = useState({
+    username: null
+  })
+
+  const [systemMessageState, setSystemMessageState] = useState({
     systemMessage: null
-  }
+  })
 
   // username state handler for setting username
-  setUsername = (username) => {
-    this.setState({username: username})
+  const setUsername = (username) => {
+    setUsernameState({username: username})
   }
 
   //system message state handler for setting system message
-  setSystemMessage = (message) => {
-    this.setState({systemMessage: message})
+  const setSystemMessage = (message) => {
+    setSystemMessageState({systemMessage: message})
   }
 
-  render() {
-
-    let display = null
-    if(!this.state.username) {
-      display = (
-        <Login setUsername={this.setUsername} systemMessage={this.state.systemMessage} />
-      )
-    }
-    else {
-      display = <Chatroom username={this.state.username} setUsername={this.setUsername} setSystemMessage={this.setSystemMessage} />
-    }
-
-    return (
-      <div className="App">
-        {display}
-      </div>
-    );
+  let display = null
+  if(!usernameState.username) {
+    display = (
+      <Login setUsername={setUsername} systemMessage={systemMessageState.systemMessage} />
+    )
   }
+  else {
+    display = <Chatroom username={usernameState.username} setUsername={setUsername} setSystemMessage={setSystemMessage} />
+  }
+
+  return (
+    <div className="App">
+      {display}
+    </div>
+  )
 }
 
 export default App;

@@ -87,7 +87,7 @@ class Chatroom extends Component {
         }
         // code 3: connection failed, unable to connect
         else if(code === 3) {
-            this.props.setSystemMessage("Connection failed. Unable​ to connect to ​the​ ​server")
+            this.props.setSystemMessage("Connection failed. Unable​ to connect to ​the​ ​server. Please refresh the page")
         }
         // connection colse routine
         this.props.setUsername(null)
