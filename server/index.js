@@ -2,7 +2,7 @@ const WebSocket = require('ws');
 
 // created a new server instance at port 8080, disable permessage-deflate
 const wss = new WebSocket.Server({ port: 8080 }, () => {
-    console.log("Chatroom server started...")
+    console.log("Chatroom server started... Listening on port 8080")
   });
 
 // clients array for each connection
@@ -98,4 +98,16 @@ wss.on('connection', (connection) => {
 
 wss.on('close', function close() {
     clearInterval(interval);
+    
 });
+
+process.on('SIGTERM', () => {
+    wss.close()
+    console.info('SIGTERM received. Closing the server..')
+    process.exit(0);
+})
+process.on('SIGINT', () => {
+    wss.close()
+    console.info('SIGINT received. Closing the server..')
+    process.exit(0);
+})
