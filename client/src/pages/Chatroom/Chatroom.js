@@ -10,7 +10,7 @@ class Chatroom extends Component {
     // each message is structured as {username, message}
     state = {
         messages: [],
-        userClickDisconnect: false
+        connectionStatus: null
     }
     
     // Create a WebSocket object in order to communicate with the server
@@ -48,32 +48,33 @@ class Chatroom extends Component {
 
         // routinely check if connection is valid
         setInterval(() => {
-            if (this.state.userClickDisconnect && this.connection.readyState === WebSocket.CLOSED) {
+            if (this.connection.readyState === WebSocket.CLOSED && this.state.connectionStatus) {
                 this.disconnect(3)
             }
-        }, 100);
+        }, 10000);
     }
 
     // duplicate username check handler for each user's init process
     // code 9 is sent to server for duplicate username check
     initNewUser = () => {
+        this.setState({connectionStatus: true})
         const data = {username: this.props.username, Code:9}
         this.connection.send(JSON.stringify(data))
     }
 
-    // message handler that send user's message to server and update local meesage array 
+    // message handler that send client's message to server
     getMessage = (message) => {
         const data = {username: this.props.username, message: message}
         this.connection.send(JSON.stringify(data))
     }
 
     // connection handler that disconnect user from server with respect to different exit code
-    disconnect = (code) => {        
+    disconnect = (code) => {      
+        this.setState({connectionStatus: false})  
         // code 0: User left chatroom by clicking disconnect button
         if(code === 0) {
             const data = {username:this.props.username, Code:0}
             this.connection.send(JSON.stringify(data))
-            this.setState({userClickDisconnect: true})
             this.props.setSystemMessage("You have logged out of the chatroom")
         }
         // code 1: server returned error code, duplicate username
@@ -91,6 +92,8 @@ class Chatroom extends Component {
         // connection colse routine
         this.props.setUsername(null)
         this.connection.close()
+        // const data = {username: this.props.username, Code: 8}
+        // this.connection.send(JSON.stringify(data))
     }
 
 
