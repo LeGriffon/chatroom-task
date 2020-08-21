@@ -39,29 +39,8 @@ function cleanUp() {
     clients = clients.filter(client => Date.now() - client.activeTime <= userTimeout)
 }
 
-// ping pong routine for cheking disconnected connections
-function noop() {}
-
-function heartbeat() {
-  this.isAlive = true;
-}
-
-const interval = setInterval(function ping() {
-    wss.clients.forEach(function each(ws) {
-        if (ws.isAlive === false) {
-            return ws.terminate();
-        }
-        ws.isAlive = false;
-        ws.ping(noop);
-        });
-    }, 5000);
-
 // emitted when server-client handshake is complete
 wss.on('connection', (connection) => {
-    connection.isAlive = true
-    connection.on('pong', heartbeat)
-    
-
     // when a message is received from client
     connection.on('message', (message) => {
         // parse JSON format data
