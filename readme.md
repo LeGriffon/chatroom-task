@@ -8,7 +8,6 @@ The task is to create a chatroom web application that allows multiple users to l
 - ReactJS: Frontend library for building UI components.
 - WebSocket​ ​API: a library that opens a two-way interactive communication session between clients and server.
 
-
 # File Structure
 ```
 client/
@@ -41,12 +40,13 @@ server/
 # Task Structure 
 ## System Code/Request Code
 System code and request code are used to direct interactions between the server and the clients. The server would send a system code directing the client's action, and the client would send a request code to get the desired information.
-### System Code -> system to client
+### System Code: system to client
 - Code 1: Found duplicate code, upon receiving the client's Request Code: 9
 - Code 2: Inactive user logs out
+- Code 4: Instruct client to close the connection of logged out user
 
 ### Request Code: client to server
-- Code 0: Notify server with info of user left chatroom, handles clients list
+- Code 0: Request to server with info of user left chatroom, handles clients list
 - Code 9: Request for username check for duplication, return System Code 1 if duplicate found; otherwise, handle the new user
 
 ## Server/Client
@@ -85,3 +85,6 @@ Once a user is logged in and a connection to the server is built, the chatroom p
 
 ## Chatroom page
 <img src="example2.png" width="600">
+
+## Login page with system message
+<img src="example3.png" width="600">

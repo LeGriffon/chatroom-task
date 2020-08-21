@@ -2,7 +2,7 @@ const WebSocket = require('ws');
 
 // created a new server instance at port 8080, disable permessage-deflate
 const wss = new WebSocket.Server({ port: 8080 }, () => {
-    console.log("Chatroom server started... Listening on port 8080")
+    console.log("Chatroom server started, listening on port 8080...")
   });
 
 // clients array for each connection
@@ -11,33 +11,7 @@ let clients = []
 let usernames = new Set()
 
 // user timeout in milliseconds
-const userTimeout = 300000
-
-// broadcast function for sending message to each user
-function broadcast(message) {
-    const data = JSON.stringify(message)
-    clients.forEach(client => client.connection.send(data))
-}
-
-// clean up any disconnected clients
-setInterval(cleanUp, 100)
-function cleanUp() {
-    const clientsTimeoutLeaving = clients.filter(client => Date.now() - client.activeTime > userTimeout)
-    clientsTimeoutLeaving.forEach(client => {
-        broadcast({username: client.username, message: 'was​ ​disconnected​ ​due​ ​to inactivity'})
-        console.log(client.username + ' is disconnected due to inactivity, server return code 2')
-        usernames.delete(client.username)
-        client.connection.send(JSON.stringify({CODE: 2}))
-    })
-    const clientsDisconnectLeaving = clients.filter(client => client.connection.readyState === client.connection.CLOSED)
-    clientsDisconnectLeaving.forEach(client => {
-        broadcast({username: client.username, message: ' ​left​ ​the​ ​chat,​ ​connection​ ​lost'})
-        console.log(client.username + ' is disconnected')
-        usernames.delete(client.username)
-    })
-    clients = clients.filter(client =>  client.connection.readyState !== client.connection.CLOSED)
-    clients = clients.filter(client => Date.now() - client.activeTime <= userTimeout)
-}
+const userTimeout = 90000
 
 // emitted when server-client handshake is complete
 wss.on('connection', (connection) => {
@@ -46,10 +20,11 @@ wss.on('connection', (connection) => {
         // parse JSON format data
         const data = JSON.parse(message)
 
-        // code: 0, user left chatroom by clicking disconnect button
+        // code: 0, user left chatroom by clicking disconnect button, instruct user to close the connection
         if(data.Code === 0) {
             console.log(data.username + ' left chatroom, server received code: 0')
             usernames.delete(data.username)
+            connection.send(JSON.stringify({CODE: 4}))
         }
         // code: 9, requested duplicate username check for new user init
         else if(data.Code === 9){
@@ -75,11 +50,35 @@ wss.on('connection', (connection) => {
     })
 });
 
-wss.on('close', function close() {
-    clearInterval(interval);
-    
-});
+// broadcast function for sending message to each user
+function broadcast(message) {
+    const data = JSON.stringify(message)
+    clients.forEach(client => client.connection.send(data))
+}
 
+// clean up any disconnected clients
+setInterval(cleanUp, 100)
+function cleanUp() {
+    // clean up clients that are inactive
+    const clientsTimeoutLeaving = clients.filter(client => Date.now() - client.activeTime > userTimeout)
+    clientsTimeoutLeaving.forEach(client => {
+        broadcast({username: client.username, message: 'was​ ​disconnected​ ​due​ ​to inactivity'})
+        console.log(client.username + ' is disconnected due to inactivity, server return code 2')
+        usernames.delete(client.username)
+        client.connection.send(JSON.stringify({CODE: 2}))
+    })
+    // clean up clients that have lost connection
+    const clientsDisconnectLeaving = clients.filter(client => client.connection.readyState === client.connection.CLOSED)
+    clientsDisconnectLeaving.forEach(client => {
+        broadcast({username: client.username, message: ' ​left​ ​the​ ​chat,​ ​connection​ ​lost'})
+        console.log(client.username + ' is disconnected')
+        usernames.delete(client.username)
+    })
+    clients = clients.filter(client =>  client.connection.readyState !== client.connection.CLOSED)
+    clients = clients.filter(client => Date.now() - client.activeTime <= userTimeout)
+}
+
+// gracefully close the server upon receiving SIGTERM and SIGINT
 process.on('SIGTERM', () => {
     wss.close()
     console.info('SIGTERM received. Closing the server..')

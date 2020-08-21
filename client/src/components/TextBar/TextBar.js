@@ -22,7 +22,7 @@ const textbar = (props) => {
 
     // disconnect handler for user initiated exit code 0
     const disconnectHandler = (event) => {
-        props.disconnect(0)
+        props.userLogoutHandler()
     }
   return (
     <div className="textBar">
