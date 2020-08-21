@@ -80,3 +80,8 @@ Once a user is logged in and a connection to the server is built, the chatroom p
 5. Execute client exit due to inactivity. System Code 2
 
 # UX/UI
+## Login page
+<img src="example1.png" width="600">
+
+## Chatroom page
+<img src="example2.png" width="600">
