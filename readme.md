@@ -1,5 +1,4 @@
-# Chatroom Full Stack Task
-This git repo is built for the full stack task of Ubiquiti's full-stack engineer position recruitment process.
+# Chatroom Full Stack Project
 
 The task is to create a chatroom web application that allows multiple users to login/logout and send/receive messages simultaneously.
 
